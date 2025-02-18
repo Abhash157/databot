@@ -8,14 +8,19 @@ image = cv2.imread("rest.jpeg")
 # Convert to grayscale
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# Apply Gaussian blur to reduce noise
-blurred = cv2.GaussianBlur(gray, (5,5), 0)
+# # Improve contrast using CLAHE (Adaptive Histogram Equalization)
+clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
+gray = clahe.apply(gray)
 
-# Apply edge detection
-edges = cv2.Canny(blurred, 50, 150)
+# # Apply adaptive thresholding to enhance text
+thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
-# Show the processed image
-plt.figure(figsize=(10, 6))
-plt.imshow(edges, cmap='gray')
-plt.title("Edge Detection Output")
+# # Apply edge detection with lower thresholds
+# edges = cv2.Canny(thresh, 30, 100)
+
+# Show result
+plt.figure(figsize=(100, 60))
+plt.imshow(thresh, cmap='gray')
+plt.title("Enhanced Edge Detection")
+plt.savefig("enhanced_edges.png")  # Save for review
 plt.show()
